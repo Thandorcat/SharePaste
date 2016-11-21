@@ -28,6 +28,7 @@ public slots:
     void EmitChange();
 private:
      QClipboard *clipboard;
+     bool write;
 };
 
 #endif // CLIPBOARD_H
