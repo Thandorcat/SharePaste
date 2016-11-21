@@ -2,7 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTcpServer>
 #include <QDebug>
+#include <QTcpSocket>
 
 namespace Ui {
 class MainWindow;
@@ -14,16 +16,17 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-    void SetClipboardField(QString newText);
     ~MainWindow();
+
 private slots:
-    void ConnectPressed();
-
-signals:
-    void ConnectRequest(QString adress, quint16 port);
-
+    void acceptConnection();
+    void updateServerProgress();
+    void displayError(QAbstractSocket::SocketError socketError);
 private:
     Ui::MainWindow *ui;
+    QTcpServer tcpServer;
+    QTcpSocket *tcpServerConnection;
+
 };
 
 #endif // MAINWINDOW_H

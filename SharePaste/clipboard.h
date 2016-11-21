@@ -7,7 +7,7 @@
 #include <QMimeData>
 #include <QDebug>
 #include <QUrl>
-#include <QPixmap>
+#include <QImage>
 
 class Clipboard : public QObject
 {
@@ -16,10 +16,11 @@ public:
     explicit Clipboard(QObject *parent = 0);
     QString GetClipboardText();
     QString GetClipboardFile();
-    QPixmap GetClipboardPixmap();
+    QImage GetClipboardImage();
+    QString GetClipboardType();
     void SetClipboardText(QString newText);
     void SetClipboardFile(QString newFilePath);
-    void SetClipboardPixmap(QPixmap nwePixmap);
+    void SetClipboardImage(QImage newImage);
 
 signals:
     void ClipboardChanged();

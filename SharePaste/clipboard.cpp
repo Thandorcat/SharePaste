@@ -10,10 +10,11 @@ void Clipboard::SetClipboardText(QString newText)
 {
     clipboard->setText(newText);
 }
-void Clipboard::SetClipboardPixmap(QPixmap newPixmap)
+void Clipboard::SetClipboardImage(QImage newImage)
 {
-    clipboard->setPixmap(newPixmap);
+    clipboard->setImage(newImage);
 }
+
 
 void Clipboard::SetClipboardFile(QString newFilePath)
 {
@@ -31,9 +32,9 @@ QString Clipboard::GetClipboardText()
 {
     return clipboard->text();
 }
-QPixmap Clipboard::GetClipboardPixmap()
+QImage Clipboard::GetClipboardImage()
 {
-    return clipboard->pixmap();
+    return clipboard->image();
 }
 
 QString Clipboard::GetClipboardFile()
@@ -43,8 +44,22 @@ QString Clipboard::GetClipboardFile()
     return path;
 }
 
+QString Clipboard::GetClipboardType()
+{
+    const QMimeData *data = clipboard->mimeData();
+    if(data->hasImage())
+        return QString("Image");
+    if(data->hasUrls())
+        return QString("File");
+    if(data->hasText())
+       return QString("Text");
+    return QString("Unknown");
+}
+
 void Clipboard::EmitChange()
 {
-    qDebug()<<"Data changed!";
+    qDebug()<<endl<<"Data changed!";
+    qDebug()<<GetClipboardType();
+    //qDebug()<<"Copied types: "<<clipboard->mimeData()->formats();
     emit ClipboardChanged();
 }
