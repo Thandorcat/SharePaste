@@ -3,6 +3,7 @@
 Controller::Controller(QObject *parent) : QObject(parent)
 {
     connect(&clipboard, SIGNAL(ClipboardChanged()), this, SLOT(UpdateClipboardField()));
+    connect(&server, SIGNAL(BufferChanged(QString)), this, SLOT(ServerBufferChanged(QString)));
 }
 
 void Controller::SetMainwindow(MainWindow *w)
@@ -40,6 +41,12 @@ void Controller::UpdateClipboardField()
 void Controller::ConnectAttempt(QString adress, quint16 port)
 {
     server.connectToServer(adress, port);
+}
+
+void Controller::ServerBufferChanged(QString newText)
+{
+    qDebug()<<"Buffer updated: "<<newText;
+    clipboard.SetClipboardText(newText);
 }
 
 

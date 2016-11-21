@@ -16,6 +16,7 @@ signals:
 
 private slots:
     void UpdateClipboardField();
+    void ServerBufferChanged(QString newText);
     void ConnectAttempt(QString adress, quint16 port);
 private:
     Clipboard clipboard;

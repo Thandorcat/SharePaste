@@ -15,14 +15,14 @@ public:
     bool connectToServer(QString adress, quint16 port);
     void sendToServer(QString text);
 signals:
-
+    void BufferChanged(QString newBuffer);
 public slots:
-
+    void updateFromServer();
 private:
-     QTcpSocket socket;
-     QString adress;
-     quint16 port;
-     bool connected;
+    QTcpSocket socket;
+    QString adress;
+    quint16 port;
+    bool connected;
 };
 
 #endif // SERVER_H
