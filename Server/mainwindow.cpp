@@ -35,9 +35,35 @@ void MainWindow::updateBuffer()
         socket= socketIter.next();
         if(socket->bytesAvailable()>0)
         {
-            QByteArray recieved = socket->readAll();
-            buffer = QString(recieved.data());
-            ui->recieve->setText(buffer);
+            buffer = socket->readAll();
+           /* QByteArray temp(&buffer);
+            char type = temp.at(0);
+            temp.remove(0,1);
+            switch(type)
+            {
+                case 't':
+                    recievedData->setData("text/plain", revievedData);
+                    dataType = QString("Text");
+                    emit DataSynchronized(recievedData, dataType);
+                    break;
+                case 'f':
+                    recievedData->setData("text/plain", revievedData);
+                    dataType = QString("File");
+                    emit DataSynchronized(recievedData, dataType);
+                    break;
+                case'i':
+                    recievedData->setData("application/x-qt-image", revievedData);
+                    dataType = QString("Image");
+                    emit DataSynchronized(recievedData, dataType);
+                    break;
+                case 'u':
+                    recievedData->setData("text/plain", revievedData);
+                    dataType = QString("Unknown");
+                    emit DataSynchronized(recievedData, dataType);
+                    break;
+            }*/
+            qDebug()<<buffer;
+            ui->recieve->setText(QString(buffer));
             NotifyAll(socket);
             break;
         }
@@ -54,7 +80,7 @@ void MainWindow::NotifyAll(QTcpSocket* exept)
         socket= socketIter.next();
         if(socket!=exept)
         {
-           socket->write(buffer.toUtf8());
+           socket->write(buffer);
         }
     }
 

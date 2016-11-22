@@ -4,24 +4,20 @@ Clipboard::Clipboard(QObject *parent) : QObject(parent)
 {
     clipboard = QApplication::clipboard();
     connect(clipboard, SIGNAL(dataChanged()), this, SLOT(EmitChange()));
-    write = false;
     qDebug()<<"Clipboard created!";
 }
 void Clipboard::SetClipboardText(QString newText)
 {
-    write = true;
     clipboard->setText(newText);
 }
 void Clipboard::SetClipboardImage(QImage newImage)
 {
-    write = true;
     clipboard->setImage(newImage);
 }
 
 
 void Clipboard::SetClipboardFile(QString newFilePath)
 {
-    write = true;
     QMimeData * md = new QMimeData();
     QUrl url = QUrl::fromLocalFile(newFilePath);
     if ( url.isValid() )
@@ -39,6 +35,11 @@ QString Clipboard::GetClipboardText()
 QImage Clipboard::GetClipboardImage()
 {
     return clipboard->image();
+}
+
+const QMimeData* Clipboard::GetClipboardMime()
+{
+    return clipboard->mimeData();
 }
 
 QString Clipboard::GetClipboardFile()
@@ -62,13 +63,13 @@ QString Clipboard::GetClipboardType()
 
 void Clipboard::EmitChange()
 {
-    if(!write)
-    {
-        qDebug()<<endl<<"Data changed!";
-        qDebug()<<GetClipboardType();
-        //qDebug()<<"Copied types: "<<clipboard->mimeData()->formats();
-        emit ClipboardChanged();
-    }
-    else
-        write = false;
+    qDebug()<<endl<<"Data changed!";
+    qDebug()<<GetClipboardType();
+    //qDebug()<<"Copied types: "<<clipboard->mimeData()->formats();
+    emit ClipboardChanged(GetClipboardType());
+}
+
+void Clipboard::SetClipboardMime(QMimeData* newData)
+{
+    clipboard->setMimeData(newData);
 }

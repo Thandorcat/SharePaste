@@ -16,11 +16,13 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     clipboard.cpp \
     controller.cpp \
-    server.cpp
+    server.cpp \
+    synchronization.cpp
 
 HEADERS  += mainwindow.h \
     clipboard.h \
     controller.h \
-    server.h
+    server.h \
+    synchronization.h
 
 FORMS    += mainwindow.ui

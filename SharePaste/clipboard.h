@@ -21,14 +21,15 @@ public:
     void SetClipboardText(QString newText);
     void SetClipboardFile(QString newFilePath);
     void SetClipboardImage(QImage newImage);
+    void SetClipboardMime(QMimeData* newData);
+    const QMimeData* GetClipboardMime();
 
 signals:
-    void ClipboardChanged();
+    void ClipboardChanged(QString type);
 public slots:
     void EmitChange();
 private:
      QClipboard *clipboard;
-     bool write;
 };
 
 #endif // CLIPBOARD_H

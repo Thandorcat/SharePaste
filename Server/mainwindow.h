@@ -29,7 +29,7 @@ private:
     Ui::MainWindow *ui;
     QTcpServer tcpServer;
     QList<QTcpSocket*> soketList;
-    QString buffer;
+    QByteArray buffer;
     void NotifyAll(QTcpSocket* exept);
 };
 

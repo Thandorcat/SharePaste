@@ -5,6 +5,7 @@
 #include "clipboard.h"
 #include "mainwindow.h"
 #include "server.h"
+#include "synchronization.h"
 
 class Controller : public QObject
 {
@@ -15,13 +16,16 @@ public:
 signals:
 
 private slots:
-    void UpdateClipboardField();
-    void ServerBufferChanged(QString newText);
+    void UpdateClipboardField(QString dataType);
+    void SyncClipboard();
+    void ServerBufferSyncronized(QMimeData*, QString);
     void ConnectAttempt(QString adress, quint16 port);
 private:
     Clipboard clipboard;
     MainWindow *window;
     Server server;
+    Synchronization sync;
+    bool writeFlag = false;
 };
 
 #endif // CONTROLLER_H

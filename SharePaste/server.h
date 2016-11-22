@@ -12,10 +12,10 @@ class Server : public QObject
     Q_OBJECT
 public:
     explicit Server(QObject *parent = 0);
-    bool connectToServer(QString adress, quint16 port);
-    void sendToServer(QString text);
+    bool ConnectToServer(QString adress, quint16 port);
+    void SendToServer(QByteArray data);
 signals:
-    void BufferChanged(QString newBuffer);
+    void BufferChanged(QByteArray newBuffer);
 public slots:
     void updateFromServer();
 private:

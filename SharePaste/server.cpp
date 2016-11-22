@@ -5,7 +5,7 @@ Server::Server(QObject *parent) : QObject(parent)
     connected = false;
 }
 
-bool Server::connectToServer(QString adress, quint16 port)
+bool Server::ConnectToServer(QString adress, quint16 port)
 {
     socket.connectToHost(adress, port);
     QThread::msleep(1000);
@@ -17,15 +17,14 @@ bool Server::connectToServer(QString adress, quint16 port)
         return false;
 }
 
-void Server::sendToServer(QString text)
+void Server::SendToServer(QByteArray data)
 {
-    socket.write(text.toUtf8());
+    socket.write(data);
 }
 
 void Server::updateFromServer()
 {
     QByteArray recieved = socket.readAll();
-    QString text = QString(recieved.data());
-    emit  BufferChanged(text);
+    emit  BufferChanged(recieved);
 }
 

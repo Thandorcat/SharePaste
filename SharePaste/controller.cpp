@@ -2,22 +2,25 @@
 
 Controller::Controller(QObject *parent) : QObject(parent)
 {
-    connect(&clipboard, SIGNAL(ClipboardChanged()), this, SLOT(UpdateClipboardField()));
-    connect(&server, SIGNAL(BufferChanged(QString)), this, SLOT(ServerBufferChanged(QString)));
+    connect(&clipboard, SIGNAL(ClipboardChanged(QString)), this, SLOT(UpdateClipboardField(QString)));
+    connect(&clipboard, SIGNAL(ClipboardChanged(QString)), this, SLOT(SyncClipboard()));
+    connect(&sync, SIGNAL(DataSynchronized(QMimeData*,QString)),
+            this, SLOT(ServerBufferSyncronized(QMimeData*,QString)));
+    sync.SetServer(&server);
 }
 
 void Controller::SetMainwindow(MainWindow *w)
 {
     window = w;
-    qDebug()<<"Controller created";
+    qDebug()<<"Controller created!";
     connect(window, SIGNAL(ConnectRequest(QString,quint16)),
             this, SLOT(ConnectAttempt(QString,quint16)));
+    UpdateClipboardField(clipboard.GetClipboardType());
 }
 
-void Controller::UpdateClipboardField()
+void Controller::UpdateClipboardField(QString dataType)
 {
-    qDebug()<<"Updating clipboard field";
-    QString dataType = clipboard.GetClipboardType();
+    qDebug()<<"Updating clipboard from local.";
     QStringList types;
     types << "Text" << "File" << "Image"<<"Unknown";
 
@@ -25,7 +28,6 @@ void Controller::UpdateClipboardField()
     {
         case 0:
             window->SetClipboardField("Text: "+clipboard.GetClipboardText());
-            server.sendToServer(clipboard.GetClipboardText());
             break;
         case 1:
             window->SetClipboardField("File: "+clipboard.GetClipboardFile());
@@ -38,15 +40,28 @@ void Controller::UpdateClipboardField()
             break;
     }
 }
-void Controller::ConnectAttempt(QString adress, quint16 port)
+
+void Controller::SyncClipboard()
 {
-    server.connectToServer(adress, port);
+    if(!writeFlag)
+    {
+        sync.SetData(clipboard.GetClipboardMime(), clipboard.GetClipboardType());
+        sync.SendData();
+    }
+    else
+        writeFlag = false;
 }
 
-void Controller::ServerBufferChanged(QString newText)
+void Controller::ConnectAttempt(QString adress, quint16 port)
 {
-    qDebug()<<"Buffer updated: "<<newText;
-    clipboard.SetClipboardText(newText);
+    server.ConnectToServer(adress, port);
+}
+
+void Controller::ServerBufferSyncronized(QMimeData* newData, QString Type)
+{
+    qDebug()<<"Updating clipboard from server!"<<Type;
+    writeFlag = true;
+    clipboard.SetClipboardMime(newData);
 }
 
 
