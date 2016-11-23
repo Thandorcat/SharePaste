@@ -19,6 +19,7 @@ void MainWindow::ConnectPressed()
     QString adress = ui->adressField->toPlainText();
     quint16  port = ui->portField->toPlainText().toUInt();
     qDebug()<<endl<<"Connect pressed: "<<adress<<":"<<port;
+    ui->connectButton->setText("Disconnect");
     emit ConnectRequest(adress, port);
 }
 

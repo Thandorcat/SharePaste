@@ -9,7 +9,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     tcpServer.listen();
     QString Port = QString::number(tcpServer.serverPort());
-    ui->adress->setText(Port);
+    ui->address->setText(Port);
+    numOfClients = 0;
     connect(&tcpServer, SIGNAL(newConnection()),
             this, SLOT(acceptConnection()));
 
@@ -23,6 +24,8 @@ void MainWindow::acceptConnection()
             this, SLOT(updateBuffer()));
     connect(connection, SIGNAL(error(QAbstractSocket::SocketError)),
             this, SLOT(displayError(QAbstractSocket::SocketError)));
+    ui->address->setText(QString::number(tcpServer.serverPort())+": " + QString::number(++numOfClients)
+                        + " clients connected");
     qDebug()<<"Added new device";
 }
 
@@ -36,34 +39,29 @@ void MainWindow::updateBuffer()
         if(socket->bytesAvailable()>0)
         {
             buffer = socket->readAll();
-           /* QByteArray temp(&buffer);
-            char type = temp.at(0);
+            QString temp(buffer);
+            char type = temp.at(0).toLatin1();
             temp.remove(0,1);
             switch(type)
             {
                 case 't':
-                    recievedData->setData("text/plain", revievedData);
-                    dataType = QString("Text");
-                    emit DataSynchronized(recievedData, dataType);
+                    temp.prepend("Text: ");
+                    ui->recieve->setText(temp);
                     break;
                 case 'f':
-                    recievedData->setData("text/plain", revievedData);
-                    dataType = QString("File");
-                    emit DataSynchronized(recievedData, dataType);
+                    temp.prepend("File: ");
+                    ui->recieve->setText(temp);
                     break;
                 case'i':
-                    recievedData->setData("application/x-qt-image", revievedData);
-                    dataType = QString("Image");
-                    emit DataSynchronized(recievedData, dataType);
+                    temp.prepend("Image: ");
+                    ui->recieve->setText(temp);
                     break;
                 case 'u':
-                    recievedData->setData("text/plain", revievedData);
-                    dataType = QString("Unknown");
-                    emit DataSynchronized(recievedData, dataType);
+                    temp.prepend("Unknown: ");
+                    ui->recieve->setText(temp);
                     break;
-            }*/
+            }
             qDebug()<<buffer;
-            ui->recieve->setText(QString(buffer));
             NotifyAll(socket);
             break;
         }

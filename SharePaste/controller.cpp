@@ -55,6 +55,7 @@ void Controller::SyncClipboard()
 void Controller::ConnectAttempt(QString adress, quint16 port)
 {
     server.ConnectToServer(adress, port);
+    SyncClipboard();
 }
 
 void Controller::ServerBufferSyncronized(QMimeData* newData, QString Type)

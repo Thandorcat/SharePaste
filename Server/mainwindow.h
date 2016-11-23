@@ -31,6 +31,7 @@ private:
     QList<QTcpSocket*> soketList;
     QByteArray buffer;
     void NotifyAll(QTcpSocket* exept);
+    int numOfClients;
 };
 
 #endif // MAINWINDOW_H
