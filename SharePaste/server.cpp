@@ -8,13 +8,17 @@ Server::Server(QObject *parent) : QObject(parent)
 bool Server::ConnectToServer(QString adress, quint16 port)
 {
     socket.connectToHost(adress, port);
-    QThread::msleep(1000);
     connect(&socket, SIGNAL(readyRead()),
             this, SLOT(updateFromServer()));
     if(socket.state()==3)
         return true;
     else
         return false;
+}
+
+void Server::DisconnectFromServer()
+{
+    socket.disconnectFromHost();
 }
 
 void Server::SendToServer(QByteArray data)

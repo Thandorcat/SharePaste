@@ -63,9 +63,6 @@ QString Clipboard::GetClipboardType()
 
 void Clipboard::EmitChange()
 {
-    qDebug()<<endl<<"Data changed!";
-    qDebug()<<GetClipboardType();
-    //qDebug()<<"Copied types: "<<clipboard->mimeData()->formats();
     emit ClipboardChanged(GetClipboardType());
 }
 

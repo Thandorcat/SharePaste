@@ -25,6 +25,7 @@ private slots:
     void acceptConnection();
     void updateBuffer();
     void displayError(QAbstractSocket::SocketError socketError);
+    void Disconnected();
 private:
     Ui::MainWindow *ui;
     QTcpServer tcpServer;

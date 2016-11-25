@@ -18,14 +18,16 @@ signals:
 private slots:
     void UpdateClipboardField(QString dataType);
     void SyncClipboard();
-    void ServerBufferSyncronized(QMimeData*, QString);
+    void ServerBufferSyncronized(QString);
     void ConnectAttempt(QString adress, quint16 port);
+    void Disonnect();
 private:
     Clipboard clipboard;
     MainWindow *window;
     Server server;
     Synchronization sync;
     bool writeFlag = false;
+    bool connected = false;
 };
 
 #endif // CONTROLLER_H

@@ -21,9 +21,11 @@ private slots:
 
 signals:
     void ConnectRequest(QString adress, quint16 port);
+    void Disconnect();
 
 private:
     Ui::MainWindow *ui;
+    bool connected = false;
 };
 
 #endif // MAINWINDOW_H

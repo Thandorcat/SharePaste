@@ -14,6 +14,7 @@ public:
     explicit Server(QObject *parent = 0);
     bool ConnectToServer(QString adress, quint16 port);
     void SendToServer(QByteArray data);
+    void DisconnectFromServer();
 signals:
     void BufferChanged(QByteArray newBuffer);
 public slots:

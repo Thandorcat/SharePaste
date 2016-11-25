@@ -22,6 +22,8 @@ void MainWindow::acceptConnection()
     soketList.append(connection);
     connect(connection, SIGNAL(readyRead()),
             this, SLOT(updateBuffer()));
+    connect(connection, SIGNAL(disconnected()),
+            this, SLOT(Disconnected()));
     connect(connection, SIGNAL(error(QAbstractSocket::SocketError)),
             this, SLOT(displayError(QAbstractSocket::SocketError)));
     ui->address->setText(QString::number(tcpServer.serverPort())+": " + QString::number(++numOfClients)
@@ -31,41 +33,32 @@ void MainWindow::acceptConnection()
 
 void MainWindow::updateBuffer()
 {
-    QTcpSocket* socket;
-    QListIterator<QTcpSocket*> socketIter(soketList);
-    while(socketIter.hasNext())
+    QTcpSocket* socket = (QTcpSocket*)sender();
+    buffer = socket->readAll();
+    QString temp(buffer);
+    char type = temp.at(0).toLatin1();
+    temp.remove(0,1);
+    switch(type)
     {
-        socket= socketIter.next();
-        if(socket->bytesAvailable()>0)
-        {
-            buffer = socket->readAll();
-            QString temp(buffer);
-            char type = temp.at(0).toLatin1();
-            temp.remove(0,1);
-            switch(type)
-            {
-                case 't':
-                    temp.prepend("Text: ");
-                    ui->recieve->setText(temp);
-                    break;
-                case 'f':
-                    temp.prepend("File: ");
-                    ui->recieve->setText(temp);
-                    break;
-                case'i':
-                    temp.prepend("Image: ");
-                    ui->recieve->setText(temp);
-                    break;
-                case 'u':
-                    temp.prepend("Unknown: ");
-                    ui->recieve->setText(temp);
-                    break;
-            }
-            qDebug()<<buffer;
-            NotifyAll(socket);
+        case 't':
+            temp.prepend("Text: ");
+            ui->recieve->setText(temp);
             break;
-        }
+        case 'f':
+            temp.prepend("File: ");
+            ui->recieve->setText(temp);
+            break;
+        case'i':
+            temp.prepend("Image: ");
+            ui->recieve->setText("Bitmap image");
+            break;
+        case 'u':
+            temp.prepend("Unknown: ");
+            ui->recieve->setText(temp);
+            break;
     }
+    qDebug()<<buffer;
+    NotifyAll(socket);
 
 }
 
@@ -92,6 +85,17 @@ void MainWindow::displayError(QAbstractSocket::SocketError socketError)
     ui->recieve->setText("Error!");
 
     tcpServer.close();
+}
+
+void MainWindow::Disconnected()
+{
+    QTcpSocket* socket = (QTcpSocket*)sender();
+    soketList.removeOne(socket);
+    if(--numOfClients>0)
+        ui->address->setText(QString::number(tcpServer.serverPort())+": " + QString::number(numOfClients)
+                              + " clients connected");
+    else
+        ui->address->setText(QString::number(tcpServer.serverPort()));
 }
 
 MainWindow::~MainWindow()

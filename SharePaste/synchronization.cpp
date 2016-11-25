@@ -2,7 +2,6 @@
 
 Synchronization::Synchronization(QObject *parent) : QObject(parent)
 {
-    recievedData = new QMimeData();
 }
 
 void Synchronization::SetServer(Server *serv)
@@ -11,37 +10,36 @@ void Synchronization::SetServer(Server *serv)
     connect(server, SIGNAL(BufferChanged(QByteArray)), this, SLOT(RecieveData(QByteArray)));
 }
 
-void Synchronization::SetData(const QMimeData *newData, QString type)
-{
-    data = newData;
-    dataType = type;
-}
-
 void Synchronization::SendData()
 {
     QStringList types;
+    dataType = clipboard.GetClipboardType();
     types << "Text" << "File" << "Image"<<"Unknown";
     switch(types.indexOf(dataType))
     {
         case 0:
-            byteData = data->data("text/plain");
+            byteData = clipboard.GetClipboardText().toUtf8();
             byteData.prepend('t');
             server->SendToServer(byteData);
             break;
         case 1:
-            byteData = data->data("text/plain");
+            byteData = clipboard.GetClipboardText().toUtf8();
             byteData.prepend('f');
             server->SendToServer(byteData);
             break;
         case 2:
-            qDebug()<<data->hasImage();
-            byteData = data->imageData().toByteArray();
+        {
+            QImage image = clipboard.GetClipboardImage();
+            QBuffer buff(&byteData);
+            buff.open(QIODevice::WriteOnly);
+            qDebug()<<image.save(&buff,"BMP");
             qDebug()<<byteData.size();
             byteData.prepend('i');
             server->SendToServer(byteData);
             break;
+        }
         case 3:
-            byteData = data->data("text/plain");
+            byteData = clipboard.GetClipboardText().toUtf8();
             byteData.prepend('u');
             server->SendToServer(byteData);
             break;
@@ -50,7 +48,8 @@ void Synchronization::SendData()
 
 void Synchronization::RecieveData(QByteArray revieved)
 {
-    qDebug()<<"Recieved data: "<<revieved;
+    qDebug()<<"Recieved data: ";
+    qDebug()<<revieved;
     char type = revieved.at(0);
     revieved.remove(0,1);
     switch(type)
@@ -58,32 +57,39 @@ void Synchronization::RecieveData(QByteArray revieved)
         case 't':
         {
             qDebug()<<"Text";
-            recievedData->setText(QString(revieved));
             dataType = QString("Text");
-            emit DataSynchronized(recievedData, dataType);
+            emit DataSynchronized(dataType);
+            clipboard.SetClipboardText(QString(revieved));
             break;
         }
         case 'f':
         {
-            recievedData->setData("text/plain", revieved);
+            qDebug()<<"File";
             dataType = QString("File");
-            emit DataSynchronized(recievedData, dataType);
+            emit DataSynchronized(dataType);
+            clipboard.SetClipboardText(QString(revieved));
             break;
         }
         case'i':
         {
-            QVariant variant(revieved);
-            QImage image= variant.value<QImage>();
-            recievedData->setImageData(image);
+            qDebug()<<"Image";
+            QImage image;
+            QBuffer buff(&revieved);
+            buff.open(QIODevice::ReadOnly);
+            qDebug()<<image.load(&buff,"BMP");
+            qDebug()<<image.byteCount();
+            qDebug()<<image.save("test.png","PNG",-1);
             dataType = QString("Image");
-            emit DataSynchronized(recievedData, dataType);
+            emit DataSynchronized(dataType);
+            clipboard.SetClipboardImage(image);
             break;
         }
         case 'u':
         {
-            recievedData->setData("text/plain", revieved);
+            qDebug()<<"Unknown";
             dataType = QString("Unknown");
-            emit DataSynchronized(recievedData, dataType);
+            emit DataSynchronized(dataType);
+            clipboard.SetClipboardText(QString(revieved));
             break;
         }
     }

@@ -16,11 +16,22 @@ void MainWindow::SetClipboardField(QString newText)
 
 void MainWindow::ConnectPressed()
 {
-    QString adress = ui->adressField->toPlainText();
-    quint16  port = ui->portField->toPlainText().toUInt();
-    qDebug()<<endl<<"Connect pressed: "<<adress<<":"<<port;
-    ui->connectButton->setText("Disconnect");
-    emit ConnectRequest(adress, port);
+    if(!connected)
+    {
+        QString adress = ui->adressField->toPlainText();
+        quint16  port = ui->portField->toPlainText().toUInt();
+        qDebug()<<endl<<"Connect pressed: "<<adress<<":"<<port;
+        ui->connectButton->setText("Disconnect");
+        connected = true;
+        emit ConnectRequest(adress, port);
+    }
+    else
+    {
+        qDebug()<<endl<<"Disconnent!";
+        ui->connectButton->setText("Connect");
+        connected = false;
+        emit Disconnect();
+    }
 }
 
 MainWindow::~MainWindow()
