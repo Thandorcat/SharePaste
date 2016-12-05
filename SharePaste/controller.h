@@ -21,6 +21,7 @@ private slots:
     void ServerBufferSyncronized(QString);
     void ConnectAttempt(QString adress, quint16 port);
     void Disonnect();
+    void DownloadStatus(int);
 private:
     Clipboard clipboard;
     MainWindow *window;

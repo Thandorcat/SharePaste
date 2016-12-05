@@ -7,6 +7,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     connect(ui->connectButton, SIGNAL(pressed()), this, SLOT(ConnectPressed()));
+    ui->downloadLable->setEnabled(false);
+    ui->dawnloadBar->setEnabled(false);
 }
 
 void MainWindow::SetClipboardField(QString newText)
@@ -31,6 +33,27 @@ void MainWindow::ConnectPressed()
         ui->connectButton->setText("Connect");
         connected = false;
         emit Disconnect();
+    }
+}
+
+void MainWindow::DownloadStatus(int status)
+{
+    if(download||status==100)
+    {
+        ui->dawnloadBar->setValue(status);
+        if(status==100)
+        {
+            ui->downloadLable->setEnabled(false);
+            ui->dawnloadBar->setEnabled(false);
+            download = false;
+        }
+    }
+    else
+    {
+        ui->downloadLable->setEnabled(true);
+        ui->dawnloadBar->setEnabled(true);
+        ui->dawnloadBar->setValue(status);
+        download = true;
     }
 }
 

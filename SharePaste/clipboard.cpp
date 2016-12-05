@@ -18,8 +18,10 @@ void Clipboard::SetClipboardImage(QImage newImage)
 
 void Clipboard::SetClipboardFile(QString newFilePath)
 {
+    qDebug()<<newFilePath;
     QMimeData * md = new QMimeData();
     QUrl url = QUrl::fromLocalFile(newFilePath);
+    qDebug()<<url;
     if ( url.isValid() )
     {
         QList<QUrl> list;

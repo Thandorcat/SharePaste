@@ -8,6 +8,8 @@ Controller::Controller(QObject *parent) : QObject(parent)
             this, SLOT(SyncClipboard()));
     connect(&sync, SIGNAL(DataSynchronized(QString)),
             this, SLOT(ServerBufferSyncronized(QString)));
+    connect(&sync, SIGNAL(DownloadStatusChanged(int)),
+            this, SLOT(DownloadStatus(int)));
     sync.SetServer(&server);
 }
 
@@ -43,6 +45,11 @@ void Controller::UpdateClipboardField(QString dataType)
             window->SetClipboardField("Unknown: "+clipboard.GetClipboardText());
             break;
     }
+}
+
+void Controller::DownloadStatus(int value)
+{
+    window->DownloadStatus(value);
 }
 
 void Controller::SyncClipboard()

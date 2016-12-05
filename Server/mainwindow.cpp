@@ -35,29 +35,37 @@ void MainWindow::updateBuffer()
 {
     QTcpSocket* socket = (QTcpSocket*)sender();
     buffer = socket->readAll();
-    QString temp(buffer);
-    char type = temp.at(0).toLatin1();
-    temp.remove(0,1);
+    buffer.size();
+    char type = buffer.at(0);
     switch(type)
     {
         case 't':
+        {
+            QString temp(buffer);
+            temp.remove(0,1);
             temp.prepend("Text: ");
             ui->recieve->setText(temp);
             break;
+        }
         case 'f':
-            temp.prepend("File: ");
-            ui->recieve->setText(temp);
+        {
+            ui->recieve->setText("File");
             break;
+        }
         case'i':
-            temp.prepend("Image: ");
+        {
             ui->recieve->setText("Bitmap image");
             break;
+        }
         case 'u':
+        {
+            QString temp(buffer);
+            temp.remove(0,1);
             temp.prepend("Unknown: ");
             ui->recieve->setText(temp);
             break;
+        }
     }
-    qDebug()<<buffer;
     NotifyAll(socket);
 
 }
@@ -71,7 +79,7 @@ void MainWindow::NotifyAll(QTcpSocket* exept)
         socket= socketIter.next();
         if(socket!=exept)
         {
-           socket->write(buffer);
+           qDebug()<<socket->write(buffer);
         }
     }
 

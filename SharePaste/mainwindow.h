@@ -15,10 +15,10 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     void SetClipboardField(QString newText);
+    void DownloadStatus(int);
     ~MainWindow();
 private slots:
     void ConnectPressed();
-
 signals:
     void ConnectRequest(QString adress, quint16 port);
     void Disconnect();
@@ -26,6 +26,7 @@ signals:
 private:
     Ui::MainWindow *ui;
     bool connected = false;
+    bool download = false;
 };
 
 #endif // MAINWINDOW_H

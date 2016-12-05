@@ -4,6 +4,8 @@
 #include <QObject>
 #include <QImage>
 #include <QVariant>
+#include <QFile>
+#include <QFileInfo>
 #include <server.h>
 #include "clipboard.h"
 
@@ -17,13 +19,21 @@ public:
     void SendData();
 signals:
     void DataSynchronized(QString);
+    void DownloadStatusChanged(int);
 public slots:
     void RecieveData(QByteArray revievedData);
+    void RecieveImage(QByteArray revievedData);
+    void RecieveFile(QByteArray revievedData);
 private:
     Server *server;
     QString dataType;
     QByteArray byteData;
     Clipboard clipboard;
+    int dataSize;
+    QString fileName;
+    QBuffer dataBuff;
+    QFile tempFile;
+    void SendFile(QString);
 };
 
 #endif // SYNCHRONIZATION_H
